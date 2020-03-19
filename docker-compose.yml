@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  minio:
+    image: 'bitnami/minio:latest'
+    ports:
+      - '9000:9000'
+    environment:
+      - MINIO_ACCESS_KEY=testingtesting123
+      - MINIO_SECRET_KEY=testingtesting123
+  
+#  tar-init:
+#    build: ./tar-splitter
+#    entrypoint: ["/app/script-init.sh"]
+#    restart: on-failure
+#    volumes: 
+#      - mc_config:/root/.mc
+
+  tar-splitter:
+    build: ./tar-splitter
+    entrypoint: ["/app/script.sh"]
+    restart: always
+    volumes: 
+      - mc_config:/root/.mc
+
+#  tar-joiner:
+#    build: ./tar-splitter
+#    entrypoint: ["/app/script-join.sh"]
+#    restart: always
+#    volumes: 
+#      - mc_config:/root/.mc:ro
+
+volumes: 
+  mc_config:
