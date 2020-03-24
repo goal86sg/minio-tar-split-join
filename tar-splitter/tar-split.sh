@@ -18,10 +18,10 @@ echo $FILENAME
 DATE=`date -Iseconds` && \
 mc cp $1 /tmp/$FILENAME
 tar 
-tar -cvzf $FILENAME.tar.gz /tmp/$FILENAME
+tar -cvf $FILENAME.tar /tmp/$FILENAME
 rm /tmp/$FILENAME
 
 # Split the object
-split -b 500m $FILENAME.tar.gz "$FILENAME.tar.gz-part"
+split -b 500m $FILENAME.tar "$FILENAME.tar-part"
 mc find . --maxdepth 1 --name '*-part*' --exec 'mc cp -q {} minio_host/destination/{base}'
-rm $FILENAME.tar.gz*
+rm $FILENAME.tar*
