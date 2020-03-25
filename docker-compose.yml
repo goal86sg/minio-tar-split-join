@@ -18,10 +18,11 @@ services:
 
   tar-splitter:
     build: ./tar-splitter
-    entrypoint: ["/app/script.sh"]
+    entrypoint: ["/app/script-split.sh"]
     restart: always
     volumes: 
       - mc_config:/root/.mc
+      - /home/goal86sg/code/minio-tar-split-join/tar-splitter:/app/ # FOR DEV
 
 #  tar-joiner:
 #    build: ./tar-splitter
