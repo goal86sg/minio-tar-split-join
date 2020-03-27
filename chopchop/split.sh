@@ -22,7 +22,7 @@ mc cp "$1" "/app/tmp/$FILENAME"
 
 # Split the object
 echo "Splitting $FILENAME"
-split -b 50m "/app/tmp/$FILENAME" "/app/tmp/$FILENAME-part"
+split -b $CHUNKSIZE "/app/tmp/$FILENAME" "/app/tmp/$FILENAME-part"
 time_split=$SECONDS
 mc find /app/tmp/ --name "$FILENAME" --print {base} | xargs -i md5sum /app/tmp/{} | sed "s/\/app\/tmp\///g" >> "/app/tmp/$FILENAME.md5sum"
 rm "/app/tmp/$FILENAME"
