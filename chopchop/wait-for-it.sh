@@ -153,6 +153,10 @@ else
         WAITFORIT_BUSYTIMEFLAG=""
 fi
 
+if [[ ! -z "${WAITFORIT_NO_BUSYTIMEFLAG}" ]]; then
+        WAITFORIT_BUSYTIMEFLAG=""
+fi
+
 if [[ $WAITFORIT_CHILD -gt 0 ]]; then
     wait_for
     WAITFORIT_RESULT=$?

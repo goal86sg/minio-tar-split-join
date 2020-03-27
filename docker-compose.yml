@@ -5,31 +5,51 @@ services:
     image: 'bitnami/minio:latest'
     ports:
       - '9000:9000'
-    environment:
-      - MINIO_ACCESS_KEY=testingtesting123
-      - MINIO_SECRET_KEY=testingtesting123
-  
-#  tar-init:
-#    build: ./tar-splitter
-#    entrypoint: ["/app/script-init.sh"]
-#    restart: on-failure
-#    volumes: 
-#      - mc_config:/root/.mc
+    env_file:
+      - .env
 
-  tar-splitter:
-    build: ./tar-splitter
-    entrypoint: ["/app/script-split.sh"]
+  splitter:
+    build: ./chopchop
+    entrypoint: ["/app/wait-for-it.sh" , "minio:9000" , "--strict" , "--timeout=300" , "--" , "bash" , "/app/script.sh"]
     restart: always
+    environment: 
+      - TX=TRUE
+    env_file:
+      - .env
     volumes: 
       - mc_config:/root/.mc
-      - /home/goal86sg/code/minio-tar-split-join/tar-splitter:/app/ # FOR DEV
+      - chopchop:/app/tmp
 
-#  tar-joiner:
-#    build: ./tar-splitter
-#    entrypoint: ["/app/script-join.sh"]
-#    restart: always
-#    volumes: 
-#      - mc_config:/root/.mc:ro
+  joiner:
+    build: ./chopchop
+    entrypoint: ["/app/wait-for-it.sh" , "minio:9000" , "--strict" , "--timeout=300" , "--" , "bash" , "/app/script.sh"]
+    restart: always
+    environment: 
+      - RX=TRUE
+    env_file:
+      - .env
+    volumes: 
+      - mc_config:/root/.mc
+      - chopchop:/app/tmp
+
+  diode:
+    build: ./chopchop
+    entrypoint: ["/app/wait-for-it.sh" , "minio:9000" , "--strict" , "--timeout=300" , "--" , "bash" , "/app/diode.sh"]
+    restart: always
+    env_file:
+      - .env
+    volumes: 
+      - mc_config:/root/.mc
+
+  janitor:
+    build: ./chopchop
+    entrypoint: ["/app/wait-for-it.sh" , "minio:9000" , "--strict" , "--timeout=300" , "--" , "bash" , "/app/janitor.sh"]
+    restart: always
+    env_file:
+      - .env
+    volumes: 
+      - mc_config:/root/.mc
 
 volumes: 
   mc_config:
+  chopchop:
